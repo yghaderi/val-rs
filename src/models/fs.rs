@@ -1,104 +1,123 @@
-use chrono::{NaiveDate};
+use chrono::NaiveDate;
 pub trait Base {
     fn total(&self) -> i64;
-    // fn struct_to_vec(&self) -> Vec<i64> {
-    //     let json_value: Value = serde_json::to_value(&self).unwrap();
-    //     let fields = json_value.as_object().unwrap();
-    //     fields.values().filter_map(|v| v.as_i64()).collect()
-    // }
 }
 
 pub struct CurrentAssets {
-    pub cash_and_cash_equivalents: i64,
-    pub marketable_securities: i64,
-    pub accounts_receivable_net: i64,
-    pub vendor_non_trade_receivables: i64,
     pub inventories: i64,
-    pub other_current_assets: i64,
+    pub trade_and_other_receivables: i64,
+    pub investments: i64,
+    pub cash_and_cash_equivalents: i64,
+    pub assets_in_disposal_groups_classified_as_held_for_sale: i64,
 }
 
 impl Base for CurrentAssets {
     fn total(&self) -> i64 {
         vec![
-            self.cash_and_cash_equivalents,
-            self.marketable_securities,
-            self.accounts_receivable_net,
-            self.vendor_non_trade_receivables,
             self.inventories,
-            self.other_current_assets,
+            self.trade_and_other_receivables,
+            self.investments,
+            self.cash_and_cash_equivalents,
+            self.assets_in_disposal_groups_classified_as_held_for_sale,
         ]
         .iter()
         .sum()
     }
 }
 
-struct NonCurrentAssets {
-    marketable_securities: i64,
-    property_plant_and_equipment_net: i64,
-    other_non_current_assets: i64,
+pub struct NonCurrentAssets {
+    pub property_plant_and_equipment: i64,
+    pub investment_property: i64,
+    pub intangible_assets: i64,
+    pub investments_in_equity_accounted_associates: i64,
+    pub investments: i64,
+    pub other_assets: i64,
 }
 
 impl Base for NonCurrentAssets {
     fn total(&self) -> i64 {
         vec![
-            self.marketable_securities,
-            self.property_plant_and_equipment_net,
-            self.other_non_current_assets,
+            self.property_plant_and_equipment,
+            self.investment_property,
+            self.intangible_assets,
+            self.investments_in_equity_accounted_associates,
+            self.investments,
+            self.other_assets,
         ]
         .iter()
         .sum()
     }
 }
-struct CurrentLiabilities {
-    accounts_payable: i64,
-    other_current_liabilities: i64,
-    deferred_revenue: i64,
-    commercial_paper: i64,
-    term_debt: i64,
+pub struct CurrentLiabilities {
+    pub trade_and_other_payables: i64,
+    pub income_tax_payable: i64,
+    pub dividends_payable: i64,
+    pub loans_and_borrowings: i64,
+    pub deferred_revenue: i64,
 }
 impl Base for CurrentLiabilities {
     fn total(&self) -> i64 {
         vec![
-            self.accounts_payable,
-            self.other_current_liabilities,
+            self.trade_and_other_payables,
+            self.income_tax_payable,
+            self.dividends_payable,
+            self.loans_and_borrowings,
             self.deferred_revenue,
         ]
         .iter()
         .sum()
     }
 }
-struct NonCurrentLiabilities {
-    term_debt: i64,
-    other_non_current_liabilities: i64,
+pub struct NonCurrentLiabilities {
+    pub loans_and_borrowings: i64,
+    pub notes_and_accounts_payable: i64,
+    pub employee_benefit_liabilities: i64,
+    pub deferred_tax_liability: i64,
 }
 impl Base for NonCurrentLiabilities {
     fn total(&self) -> i64 {
-        vec![self.term_debt, self.other_non_current_liabilities]
-            .iter()
-            .sum()
+        vec![
+            self.loans_and_borrowings,
+            self.notes_and_accounts_payable,
+            self.employee_benefit_liabilities,
+            self.deferred_tax_liability,
+        ]
+        .iter()
+        .sum()
     }
 }
-struct ShareholdersEquity {
-    common_stock: i64,
-    retained_earnings: i64,
+pub struct ShareholdersEquity {
+    pub share_capital: i64,
+    pub treasury_shares: i64,
+    pub treasury_shares_surplus: i64,
+    pub legal_reserve: i64,
+    pub retained_earnings: i64,
 }
 impl Base for ShareholdersEquity {
     fn total(&self) -> i64 {
-        vec![self.common_stock, self.retained_earnings].iter().sum()
+        vec![
+            self.share_capital,
+            self.treasury_shares,
+            self.treasury_shares_surplus,
+            self.legal_reserve,
+            self.retained_earnings,
+        ]
+        .iter()
+        .sum()
     }
 }
 
-struct BalanceSheet {
-    current_assets: CurrentAssets,
-    none_current_assets: NonCurrentAssets,
-    current_liabilities: CurrentLiabilities,
-    non_current_liabilities: NonCurrentLiabilities,
-    shareholders_equity: ShareholdersEquity,
+pub struct BalanceSheet {
+    pub current_assets: CurrentAssets,
+    pub non_current_assets: NonCurrentAssets,
+    pub current_liabilities: CurrentLiabilities,
+    pub non_current_liabilities: NonCurrentLiabilities,
+    pub shareholders_equity: ShareholdersEquity,
 }
 
 impl BalanceSheet {
     fn total_assets(&self) -> i64 {
-        self.current_assets.total() + self.none_current_assets.total()
+        self.current_assets.total() + self.non_current_assets.total()
     }
     fn total_liabilities(&self) -> i64 {
         self.current_liabilities.total() + self.non_current_liabilities.total()
@@ -108,9 +127,49 @@ impl BalanceSheet {
     }
 }
 
-struct IncomeStatements{}
-struct FinancialStatements{
-    financial_year: NaiveDate,
-    balance_sheet: BalanceSheet,
-    income_statements: IncomeStatements
+pub struct IncomeStatements {
+    pub sales: i64,
+    pub cost_of_sales: i64,
+    pub selling_general_and_administrative_expense: i64,
+    pub other_operating_income: i64,
+    pub other_operating_expenses: i64,
+    pub finance_expense: i64,
+    pub net_miscellaneous_income: i64,
+    pub tax_expense: i64,
+    pub profit_or_loss_on_discontinued_operation_net_of_tax: i64,
+}
+struct BottomLine {
+    gross_profit: i64,
+    profit_from_operations: i64,
+    profit_before_tax: i64,
+    profit_from_continuing_operations: i64,
+    profit: i64,
+}
+
+impl IncomeStatements {
+    fn bottom_line(self) -> BottomLine {
+        let gross_profit = self.sales + self.cost_of_sales;
+        let profit_from_operations = gross_profit
+            + self.selling_general_and_administrative_expense
+            + self.other_operating_income
+            + self.other_operating_expenses;
+        let profit_before_tax =
+            profit_from_operations + self.finance_expense + self.net_miscellaneous_income;
+
+        let profit_from_continuing_operations = profit_before_tax + self.tax_expense;
+        let profit = profit_from_continuing_operations
+            + self.profit_or_loss_on_discontinued_operation_net_of_tax;
+        BottomLine {
+            gross_profit,
+            profit_from_operations,
+            profit_before_tax,
+            profit_from_continuing_operations,
+            profit,
+        }
+    }
+}
+pub struct FinancialStatements {
+    pub financial_year: NaiveDate,
+    pub balance_sheet: BalanceSheet,
+    pub income_statements: IncomeStatements,
 }

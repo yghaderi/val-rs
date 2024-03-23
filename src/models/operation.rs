@@ -1,19 +1,24 @@
 use std::cmp::min;
 
+#[derive(Clone, Debug)]
 pub enum CostAllocationMethods {
     Fixed,
     Variable,
 }
+#[derive(Clone, Debug)]
 pub struct CostAllocation {
     pub method: CostAllocationMethods,
     pub ratio: f64,
 }
 
+#[derive(Clone, Debug)]
 pub enum DepreciationMethods {
     StraightLine,
     DecliningBalance,
     DoubleDecliningBalance,
 }
+
+#[derive(Clone, Debug)]
 pub struct FixedAsset {
     pub id: String,
     pub name: String,
@@ -59,5 +64,4 @@ impl FixedAsset {
             cost_allocation: self.cost_allocation.clone(),
         }
     }
-
 }
