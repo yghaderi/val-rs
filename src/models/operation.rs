@@ -1,3 +1,5 @@
+use chrono::{Datelike, NaiveDate};
+use std::arch::aarch64::float32x2_t;
 use std::cmp::min;
 
 #[derive(Clone, Debug)]
@@ -64,4 +66,127 @@ impl FixedAsset {
             cost_allocation: self.cost_allocation.clone(),
         }
     }
+}
+
+struct ExtraChange {
+    date: NaiveDate,
+    factor: f64,
+}
+
+pub struct AssetsUnderConstruction {
+    pub id: String,
+    pub name: String,
+    pub capital_expense: i64,
+    pub salvage_value: i64,
+    pub depreciation_method: DepreciationMethods,
+    pub useful_life: i64,
+    pub cost_allocation: Option<Vec<CostAllocation>>,
+    pub extra_change: Option<Vec<ExtraChange>>,
+}
+
+struct PreNormProduction {
+    date: NaiveDate,
+    qty: f64,
+}
+pub struct CapacityEffect {
+    product_id: String,
+    capacity: f64,
+    production: f64,
+    pre_norm_production: Vec<PreNormProduction>,
+
+}
+
+struct Progress {
+    date: NaiveDate,
+    pct: f64, // cum-sum
+}
+
+struct DevelopPlan {
+    id: String,
+    name: String,
+    assets_under_construction: Vec<AssetsUnderConstruction>,
+    capacity_effect: Option<Vec<CapacityEffect>>,
+    progress: Vec<Progress>,
+}
+
+trait Test{
+    fn fy(date:NaiveDate)-> NaiveDate{
+        date
+    }
+}
+impl DevelopPlan {
+
+
+    fn fixed_asset(self) -> Option<Vec<FixedAsset>> {
+        if self.progress[0].pct == 1. {
+            let mut result: Vec<FixedAsset> = vec![];
+            for i in self.assets_under_construction {
+                result.push(FixedAsset {
+                    id: i.id,
+                    name: i.name,
+                    book_value: i.capital_expense,
+                    useful_life: i.useful_life,
+                    salvage_value: i.salvage_value,
+                    cum_depreciation: 0,
+                    depreciation: 0,
+                    depreciation_method: i.depreciation_method,
+                    cost_allocation: i.cost_allocation,
+                })
+            }
+            Some(result)
+        } else {
+            None
+        }
+    }
+    fn assets_under_construction(self){
+
+    }
+}
+#[derive(Clone, Debug)]
+pub struct FinancialYear {
+    pub date: NaiveDate,
+    pub length: u8,
+}
+
+impl FinancialYear {
+    pub fn dates(&self) -> Vec<NaiveDate> {
+        let mut dates: Vec<NaiveDate> = vec![];
+        for i in 0..self.length {
+            dates.push(
+                NaiveDate::from_ymd_opt(
+                    self.date.yaer() + i as i32,
+                    self.date.month(),
+                    self.date.day(),
+                )
+                    .unwrap(),
+            )
+        }
+        dates
+    }
+}
+
+pub struct RateChange{
+    pub date: NaiveDate,
+    pub f: f64
+}
+
+pub struct  BaseRateChange{
+    pub id: String,
+    pub name: String,
+    pub rates: Vec<RateChange>
+}
+
+pub struct Input {
+    pub fixed_assets: Option<Vec<FixedAsset>>,
+}
+pub enum CostCenterCategory {
+    Product,
+    Service,
+    Operational,
+}
+pub struct CostCenter {
+    pub id: String,
+    pub name: String,
+    pub category: CostCenterCategory,
+    pub input: Option<Input>,
 }
