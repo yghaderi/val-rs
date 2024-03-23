@@ -1,7 +1,8 @@
 use crate::models::fs;
 use chrono::NaiveDate;
-fn demo() {
+pub fn demo_financial_statements() -> fs::FinancialStatements {
     let current_assets = fs::CurrentAssets {
+        prepayments: 19_729_794,
         inventories: 38_267_237,
         trade_and_other_receivables: 17_211_092,
         investments: 0,
@@ -47,7 +48,7 @@ fn demo() {
         sales: 226_549_242,
         cost_of_sales: -180_056_411,
         selling_general_and_administrative_expense: -3_655_536,
-        other_operating_income: 320_486,
+        other_operating_income: 220_486,
         other_operating_expenses: -1_946_163,
         finance_expense: -6_195_410,
         net_miscellaneous_income: -186_470,
@@ -55,9 +56,9 @@ fn demo() {
         profit_or_loss_on_discontinued_operation_net_of_tax: 0,
     };
     let financial_statements = fs::FinancialStatements {
-        financial_year: NaiveDate::from_ymd_opt(2023, 10, 10).unwrap(),
+        financial_year: NaiveDate::from_ymd_opt(2023, 3, 20).unwrap(),
         balance_sheet,
         income_statements,
     };
-
+    financial_statements
 }

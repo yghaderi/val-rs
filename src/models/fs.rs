@@ -4,6 +4,7 @@ pub trait Base {
 }
 
 pub struct CurrentAssets {
+    pub prepayments: i64,
     pub inventories: i64,
     pub trade_and_other_receivables: i64,
     pub investments: i64,
@@ -14,6 +15,7 @@ pub struct CurrentAssets {
 impl Base for CurrentAssets {
     fn total(&self) -> i64 {
         vec![
+            self.prepayments,
             self.inventories,
             self.trade_and_other_receivables,
             self.investments,
@@ -116,13 +118,13 @@ pub struct BalanceSheet {
 }
 
 impl BalanceSheet {
-    fn total_assets(&self) -> i64 {
+    pub fn total_assets(&self) -> i64 {
         self.current_assets.total() + self.non_current_assets.total()
     }
-    fn total_liabilities(&self) -> i64 {
+    pub fn total_liabilities(&self) -> i64 {
         self.current_liabilities.total() + self.non_current_liabilities.total()
     }
-    fn total_liabilities_and_shareholders_equity(&self) -> i64 {
+    pub fn total_liabilities_and_shareholders_equity(&self) -> i64 {
         self.total_liabilities() + self.shareholders_equity.total()
     }
 }
@@ -138,16 +140,16 @@ pub struct IncomeStatements {
     pub tax_expense: i64,
     pub profit_or_loss_on_discontinued_operation_net_of_tax: i64,
 }
-struct BottomLine {
-    gross_profit: i64,
-    profit_from_operations: i64,
-    profit_before_tax: i64,
-    profit_from_continuing_operations: i64,
-    profit: i64,
+pub struct BottomLine {
+    pub gross_profit: i64,
+    pub profit_from_operations: i64,
+    pub profit_before_tax: i64,
+    pub profit_from_continuing_operations: i64,
+    pub profit: i64,
 }
 
 impl IncomeStatements {
-    fn bottom_line(self) -> BottomLine {
+    pub fn bottom_line(self) -> BottomLine {
         let gross_profit = self.sales + self.cost_of_sales;
         let profit_from_operations = gross_profit
             + self.selling_general_and_administrative_expense

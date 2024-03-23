@@ -1,4 +1,4 @@
-mod demo;
+pub mod demo;
 pub mod models;
 
 pub fn add(left: usize, right: usize) -> usize {
