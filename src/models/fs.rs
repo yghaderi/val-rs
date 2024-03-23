@@ -1,3 +1,4 @@
+use chrono::{NaiveDate};
 pub trait Base {
     fn total(&self) -> i64;
     // fn struct_to_vec(&self) -> Vec<i64> {
@@ -105,4 +106,11 @@ impl BalanceSheet {
     fn total_liabilities_and_shareholders_equity(&self) -> i64 {
         self.total_liabilities() + self.shareholders_equity.total()
     }
+}
+
+struct IncomeStatements{}
+struct FinancialStatements{
+    financial_year: NaiveDate,
+    balance_sheet: BalanceSheet,
+    income_statements: IncomeStatements
 }
